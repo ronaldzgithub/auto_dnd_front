@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto D&D - Select Campaign</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
+    <script type="module" src="firebaseAuth.js"></script>
+    <script type="module" src="serverComms.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="topbar.css">
+    
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .panel {
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 10px;
+            width: 400px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        input {
+            height: 20px;
+            line-height: 20px;
+        }
+        input[type="number"] {
+            width: 50px;
+        }
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            margin-bottom: 10px;
+            line-height: 20px;
+            padding: 0 10px;
+            margin: 10px 0;
+            height: 40px;
+            font-size: 16px;
+        }
+        .campaignOptions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .campaignOption {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .fas {
+            cursor: pointer; 
+            color: red;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="radio"] {
+            vertical-align: sub;
+            margin-bottom: 10px;
+        }
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 20px;
+            }
+            .panel {
+                width: auto;
+            }
+            #campaignId {
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+    
+    <script type="module">
+        import { sendMessage } from './serverComms.js';
+        import { initializeFirebaseAndGetToken } from './firebaseAuth.js';
+
+        window.onload = async () => {
+            const payload = {'user_token': await initializeFirebaseAndGetToken()};
+            const response = await sendMessage('fetch_campaigns/', payload);
+            console.log('fetch_campaigns/ response', response);
+            if (response) {
+                const campaignOptions = document.querySelector('.campaignOptions');
+                for (const campaign of response.user_campaigns) {
+                    const campaignOption = document.createElement('div');
+                    campaignOption.className = 'campaignOption';
+                    campaignOption.innerHTML = `
+                        <label>
+                            <input type="radio" name="campaign" value="${campaign.campaign_id}"> ${campaign.campaign_name}
+                        </label>
+                        <i class="fas fa-trash-alt" onclick="confirmDelete('${campaign.campaign_id}')"></i>
+                    `;
+                    campaignOptions.appendChild(campaignOption);
+                }
+            }
+        }
+
+        window.redirectToSelectedCampaign = async function() {
+            var radios = document.getElementsByName('campaign');
+            let campaign_id = "new";
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    campaign_id = radios[i].value;
+                    break;
+                }
+            }
+            // redirect depending on selected option
+            if (campaign_id === "new") {
+                window.location.href = `new_campaign.html`;
+            } else {
+                window.location.href = `play.html?campaignId=${encodeURIComponent(campaign_id)}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="topBar">
+        <div></div>
+        <h1>Auto D&D</h1>
+        <div class="topBarLinks">
+            <a href="/profile.html"><i class="fa fa-user-circle" aria-hidden="true" title="Account" style="margin-right: 15px"></i></a>
+        </div>
+    </div>
+    <h3>Select Your Campaign</h3>
+    <div class="panel">
+        <p>Loads an existing campaign, or creates a new one.</p> 
+        <!-- Radio buttons for campaign options -->
+        <div class="campaignOptions">
+            
+            <div class="campaignOption">
+                <label>
+                    <input type="radio" id="campaignOption1" name="campaign" value="new" checked> <b>Start New Campaign</b>
+                </label>
+            </div>
+
+            <!-- 
+            <div class="campaignOption">
+                <label>
+                    <input type="radio" id="campaignOption2" name="campaign" value="123"> Tales of Ice and Fire
+                </label>
+                <i class="fas fa-trash-alt" onclick="confirmDelete(document.getElementById('campaignOption2').value)"></i>
+            </div>
+
+            <div class="campaignOption">
+                <label>
+                    <input type="radio" id="campaignOption3" name="campaign" value="456"> Lands of Blood and Honor
+                </label>
+                <i class="fas fa-trash-alt" onclick="confirmDelete(document.getElementById('campaignOption3').value)"></i>
+            </div> 
+            -->
+
+        </div>
+        <button onclick="redirectToSelectedCampaign()">Let's go</button>
+    </div>
+
+    <script>
+        function confirmDelete(campaignName) {
+            if (confirm("Are you sure you want to delete this campaign?")) {
+                console.log("Request sent to delete " + campaignName);
+            }
+        }
+    </script>
+</body>
+</html>

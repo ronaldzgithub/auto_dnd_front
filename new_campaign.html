@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto D&D - New Campaign</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="topbar.css">
+
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .panel {
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 10px;
+            width: 320px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        input, button {
+            height: 20px;
+            line-height: 20px;
+        }
+        input[type="number"] {
+            width: 50px;
+        }
+        input[type="text"], button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 18px;
+            }
+            h1 { text-align: center; }
+            #campaignId, #name, #background, #race, #class, #alignment, button {
+                height: 40px;
+                font-size: 18px;
+            }
+            button {
+                padding: 0 10px;
+                margin: 10px 0;
+            }
+            .panel {
+                width: auto;
+            
+            }
+        }
+    </style>
+    <script type="module">
+        import { sendMessage } from './serverComms.js';
+        import { initializeFirebaseAndGetToken } from './firebaseAuth.js';
+
+        window.onload = async () => {
+            const user_token = await initializeFirebaseAndGetToken();
+            // const payload = {'user_token': user_token};
+            // const response = await sendMessage('create_campaign/', payload);
+            // console.log('fetch_campaigns/ response', response);
+        }
+
+        window.rollAttributes = function() {
+            // Random number between 8 and 16
+            document.getElementById('strength').value = Math.floor(Math.random() * 9) + 8; 
+            document.getElementById('dexterity').value = Math.floor(Math.random() * 9) + 8;
+            document.getElementById('constitution').value = Math.floor(Math.random() * 9) + 8;
+            document.getElementById('intelligence').value = Math.floor(Math.random() * 9) + 8;
+            document.getElementById('wisdom').value = Math.floor(Math.random() * 9) + 8;
+            document.getElementById('charisma').value = Math.floor(Math.random() * 9) + 8;
+        }
+
+        window.submitCharacter = async function() {
+            const characterData = {
+                name: document.getElementById('name').value,
+                background: document.getElementById('background').value,
+                strength: document.getElementById('strength').value,
+                dexterity: document.getElementById('dexterity').value,
+                constitution: document.getElementById('constitution').value,
+                intelligence: document.getElementById('intelligence').value,
+                wisdom: document.getElementById('wisdom').value,
+                charisma: document.getElementById('charisma').value
+            };
+            const user_token = await initializeFirebaseAndGetToken();
+            const payload = {'user_token': user_token, 'character_data': characterData};
+            const response = await sendMessage('create_campaign/', payload);
+            console.log('create_campaign/ response', response);
+            if (response && response.campaign_id) {
+                console.log('Campaign created with id', response.campaign_id);
+                window.location.href = `play.html?campaignId=${encodeURIComponent(response.campaign_id)}`;
+            } else {
+                console.error('Error creating campaign');
+            }
+            
+        }
+    </script>
+</head>
+<body>
+    <div class="topBar">
+        <div></div>
+        <h1>Auto D&D</h1>
+        <div class="topBarLinks">
+            <a href="/profile.html"><i class="fa fa-user-circle" aria-hidden="true" title="Account" style="margin-right: 15px"></i></a>
+        </div>
+    </div>
+    <h3>Create Your Character</h3>
+    <div class="panel">
+        name 
+        <input type="text" id="name" placeholder="Josh", value="Josh">
+        background 
+        <input type="text" id="background" placeholder="noble", value="noble">
+        race
+        <input type="text" id="race" placeholder="human", value="human" disabled>
+        class
+        <input type="text" id="class" placeholder="fighter", value="fighter" disabled>
+        alignment
+        <input type="text" id="alignment" placeholder="neutral", value="neutral" disabled>
+
+        <div class="input-group">
+            str <input type="number" id="strength" value="10" disabled>
+            dex <input type="number" id="dexterity" value="10" disabled>
+            con <input type="number" id="constitution" value="10" disabled>
+        </div>
+        <div class="input-group">
+            int <input type="number" id="intelligence" value="10" disabled>
+            wis <input type="number" id="wisdom" value="10" disabled>
+            cha <input type="number" id="charisma" value="10" disabled>
+        </div>
+        <button onclick="rollAttributes()">Roll Attributes</button>
+        <button onclick="submitCharacter()">Start Campaign</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 700px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.topBar > div {
+    flex: 1;
+}
+.topBarCredits {
+    font-weight: bold;
+}
+.topBarLinks {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+.topBarLinks a {
+    color: #444;
+    font-weight: bold;
+}
+#logoutButton {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .topBar {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .topBarLinks {
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+}
