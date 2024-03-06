@@ -5,7 +5,7 @@
     <title>Auto D&D Profile</title>
     <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
-    <script src="auth.js"></script>
+    <script type="module" src="firebaseAuth.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="topbar.css">
     <style>
@@ -39,9 +39,10 @@
             }
         }
     </style>
-    <script>
+    <script type="module">
+        import { initializeFirebaseAndGetToken } from './firebaseAuth.js';
         // selectCampaign function
-        function selectCampaign() {
+        window.backToCampaigns = function() {
             window.location.href = "/index.html";
         }
         function deleteAccount() {
@@ -60,14 +61,16 @@
 
             });
         }
-        function logout() {
+        window.logout = function() {
             firebase.auth().signOut().then(function() {
                 window.location.href = "/login.html";
             }).catch(function(error) {
                 console.log(error);
             });
         }
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            const { idToken, email } = await initializeFirebaseAndGetToken();
+            
             firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
                     // User is signed in, display user's email
@@ -77,10 +80,6 @@
                 }
             });
 
-            // Existing logout button event listener
-            document.getElementById('logoutButton').addEventListener('click', function() {
-                firebase.auth().signOut();
-            });
         });
     </script>
 </head>
@@ -98,7 +97,7 @@
         <p>Credits: 10000</p> 
         <p style="font-size: 12px">+1000 per day up to 10000 max</p>
         <br>
-        <button onclick="selectCampaign()">Back To Campaigns</button>
+        <button onclick="backToCampaigns()">Back To Campaigns</button>
         <button onclick="logout()">Logout</button>
         <!-- <button onclick="deleteAccount()" style="background-color:indianred;">Delete Account</button> -->
     </div>
