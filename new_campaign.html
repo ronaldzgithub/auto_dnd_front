@@ -64,9 +64,9 @@
 
         window.onload = async () => {
             const user_token = await initializeFirebaseAndGetToken();
-            // const payload = {'user_token': user_token};
-            // const response = await sendMessage('create_campaign/', payload);
-            // console.log('fetch_campaigns/ response', response);
+            const payload = {'user_token': user_token};
+            const response = await sendMessage('create_campaign/', payload);
+            console.log('fetch_campaigns/ response', response);
         }
 
         window.rollAttributes = function() {
