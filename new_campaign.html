@@ -81,14 +81,14 @@
 
         window.submitCharacter = async function() {
             const characterData = {
-                name: document.getElementById('name').value,
-                background: document.getElementById('background').value,
-                strength: document.getElementById('strength').value,
-                dexterity: document.getElementById('dexterity').value,
-                constitution: document.getElementById('constitution').value,
-                intelligence: document.getElementById('intelligence').value,
-                wisdom: document.getElementById('wisdom').value,
-                charisma: document.getElementById('charisma').value
+                name: document.getElementById('name').value+ "",
+                background: document.getElementById('background').value+ "",
+                strength: document.getElementById('strength').value+ "",
+                dexterity: document.getElementById('dexterity').value+ "",
+                constitution: document.getElementById('constitution').value+ "",
+                intelligence: document.getElementById('intelligence').value+ "",
+                wisdom: document.getElementById('wisdom').value+ "",
+                charisma: document.getElementById('charisma').value+ ""
             };
             const user_token = await initializeFirebaseAndGetToken();
             const payload = {'user_token': user_token, 'character_data': characterData};
