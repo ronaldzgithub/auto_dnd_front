@@ -21,7 +21,7 @@ export function initializeFirebaseAndGetToken() {
                 console.log("User is authenticated with ID:", user.uid);
                 // Retrieve and return the ID token
                 user.getIdToken().then(idToken => {
-                    resolve({idToken, email: user.email});
+                    resolve(idToken);
                 }).catch(error => {
                     console.log("Error retrieving user ID token:", error);
                     reject(error);
