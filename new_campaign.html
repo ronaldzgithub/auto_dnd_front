@@ -65,7 +65,7 @@
         window.onload = async () => {
             const user_token = await initializeFirebaseAndGetToken();
             const payload = {'user_token': user_token};
-            const response = await sendMessage('fetch_campaigns/', Object.assign({}, payload));
+            const response = await sendMessage('fetch_campaigns/', payload);
             alert(response)
             console.log('fetch_campaigns/ response', response);
         }
@@ -92,18 +92,10 @@
                 charisma: document.getElementById('charisma').value+ ""
             };
             const user_token = await initializeFirebaseAndGetToken();
-            const payload = {'user_token': user_token, 'character_data': characterData};
-            class ExampleClass {
-                constructor(propertyOne, propertyTwo) {
-                    this.user_token = propertyOne;
-                    this.character_data = propertyTwo;
-                }
-            }
+            const payload = {'user_token': user_token+"", 'character_data': characterData};
+            
 
-            // Usage example:
-            const exampleInstance = new ExampleClass(user_token, characterData);
-
-            const response = await sendMessage('create_campaign/', exampleInstance);
+            const response = await sendMessage('create_campaign/', payload);
             console.log('create_campaign/ response', response);
             if (response && response.campaign_id) {
                 console.log('Campaign created with id', response.campaign_id);
