@@ -92,7 +92,6 @@
                 charisma: document.getElementById('charisma').value+ ""
             };
             const user_token = await initializeFirebaseAndGetToken();
-            alert(user_token) 
             const payload = {'user_token': user_token, 'character_data': characterData};
             
 
