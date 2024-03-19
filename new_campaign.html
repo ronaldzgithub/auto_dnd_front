@@ -65,7 +65,7 @@
         window.onload = async () => {
             const user_token = await initializeFirebaseAndGetToken();
             const payload = {'user_token': user_token};
-            const response = await sendMessage('create_campaign/', payload);
+            const response = await sendMessage('create_campaign/', Object.assign({}, payload));
             console.log('fetch_campaigns/ response', response);
         }
 
